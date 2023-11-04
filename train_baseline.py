@@ -41,14 +41,14 @@ def test(model,device,data_loader):
             label = batch_sample["Answer"]
             outputs = model(image,question)
             correct += check(label,outputs)
-            #print(batch_idx)
+            print(batch_idx)
     
     print('\nTest set: Accuracy: {}/{} ({:.2f}%)\n'.format(
          correct, len(data_loader["test"].dataset),
         100. * correct / len(data_loader["test"].dataset)))
 
 def main(model_name):
-    device = torch.device('cpu')
+    device = torch.device('mps')
     batch_size = 32
     shuffle = True
     data_loader = get_data_loader(data_dir="./data/",batch_size=batch_size,shuffle=shuffle)

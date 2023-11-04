@@ -1,1 +1,7 @@
 **/__pycache__
+**/basic_vqa
+**/.ipynb_checkpoints
+**/coco
+**/datasets/
+**/models
+.DS_Store
