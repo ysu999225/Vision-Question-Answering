@@ -12,7 +12,7 @@ question_vocab_counter = Counter()
 for entry in questions_data['questions']:  
     tokens = text_helper.tokenize(entry['question']) 
     question_vocab_counter.update(tokens)
-# Create a sorted list， most common words first
+# Create a sorted list，most common words first
 question_vocab = ['<unk>'] + [word for word, _ in question_vocab_counter.most_common()]
 
 with open('vocab_questions.txt', 'w') as file:
