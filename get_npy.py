@@ -29,7 +29,7 @@ def preprocess_vqa_data(questions_json_path, annotations_json_path, qst_vocab, a
                 ans_index = ans_vocab.word2idx(annotation['multiple_choice_answer'])
 
                 # Pair them with the image path 
-                image_path = os.path.join(image_dir, str(qst['image_id']) + '.png')
+                image_path = os.path.join(image_dir, str(qst['image_id']).zfill(12) + '.png')
 
 
                 structured_data.append({
@@ -40,15 +40,15 @@ def preprocess_vqa_data(questions_json_path, annotations_json_path, qst_vocab, a
         
         return structured_data
 
-train_questions_json_path = '/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/filtered jason file/filtered_train_questions.json'
-train_annotations_json_path = '/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/filtered jason file/filtered_train_annotations.json'
-valid_questions_json_path = '/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/filtered jason file/filtered_val_questions.json'
-valid_annotations_json_path = '/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/filtered jason file/filtered_val_annotations.json'
-image_dir = '/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/data/train/images'
+train_questions_json_path = './filtered jason file/filtered_train_questions.json'
+train_annotations_json_path = './filtered jason file/filtered_train_annotations.json'
+valid_questions_json_path = './filtered jason file/filtered_val_questions.json'
+valid_annotations_json_path = './filtered jason file/filtered_val_annotations.json'
+image_dir = './datasets/Resized_Images/train/'
 
 
-qst_vocab = text_helper.VocabDict('/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/dataset/vocab_questions.txt')
-ans_vocab = text_helper.VocabDict('/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/dataset/vocab_answers.txt')
+qst_vocab = text_helper.VocabDict('./dataset/vocab_questions.txt')
+ans_vocab = text_helper.VocabDict('./dataset/vocab_answers.txt')
 
 
 train_data = preprocess_vqa_data(train_questions_json_path, train_annotations_json_path, qst_vocab, ans_vocab,image_dir)
