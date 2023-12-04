@@ -85,5 +85,6 @@ def mainVQA(model_name):
 
 if __name__ == "__main__":
     baseline_model_list = ["random","prior_yes","prior_q_type"]
-    for model in baseline_model_list:
-        mainVQA(model)
+    #for model in baseline_model_list:
+       # mainVQA(model)
+    mainVQA("random")
