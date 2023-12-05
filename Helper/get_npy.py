@@ -2,7 +2,7 @@ import numpy as np
 import json
 import os
 import argparse
-import text_helper
+import Helper.text_helper as text_helper
 from collections import defaultdict
 
 
@@ -63,24 +63,24 @@ def vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 
 
 def main(args):
     
-    image_dir = args.input_dir+'/resize_Images/%s/'
-    annotation_file = args.input_dir+'/Annotations/filtered_%s_annotations.json'
-    question_file = args.input_dir+'/Questions/filtered_%s_questions.json'
-    #vocab_answer_file = args.output_dir+'/Users/yuansu/Desktop/CS444-VQA/output_dir/vocab_answers.txt'
-    vocab_answer_file = os.path.join(args.output_dir, 'vocab_answers.txt')
+   
+    image_dir = '/Users/yuansu/Desktop/CS444-VQA/input_dir/resize_images/%s/' 
+    annotation_file = '/Users/yuansu/Desktop/CS444-VQA/input_dir/Annotations/filtered_%s_annotations.json'
+    question_file = '/Users/yuansu/Desktop/CS444-VQA/input_dir/Questions/filtered_%s_questions.json'
+    vocab_answer_file = '/Users/yuansu/Desktop/CS444-VQA/output_dir/vocab_answers.txt'
     answer_dict = text_helper.VocabDict(vocab_answer_file)
     valid_answer_set = set(answer_dict.word_list)    
     
     train = vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 'train2017')
     valid = vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 'val2017')
     test = vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 'test2017')
-    #test_dev = vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 'test-dev')
     
-    np.save(args.output_dir+'/train.npy', np.array(train))
-    np.save(args.output_dir+'/valid.npy', np.array(valid))
-    np.save(args.output_dir+'/train_valid.npy', np.array(train+valid))
-    np.save(args.output_dir+'/test.npy', np.array(test))
-    #np.save(args.output_dir+'/test-dev.npy', np.array(test_dev))
+    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/train.npy', np.array(train))
+    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/valid.npy', np.array(valid))
+    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/train_valid.npy', np.array(train+valid))
+    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/test.npy', np.array(test))
+
+
 
 
 if __name__ == '__main__':

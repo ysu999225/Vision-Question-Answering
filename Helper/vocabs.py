@@ -6,16 +6,31 @@ import re
 from collections import defaultdict
 
 
+def safe_decode(text):
+    try:
+        return text.decode('utf-8')
+    except UnicodeDecodeError:
+        # Replace non-decodable bytes with a placeholder
+        return text.decode('utf-8', errors='replace')
+
 def make_vocab_questions(input_dir):
-    """Make dictionary for questions and save them into text file."""
     vocab_set = set()
     SENTENCE_SPLIT_REGEX = re.compile(r'(\W+)')
     question_length = []
     datasets = os.listdir(input_dir)
     for dataset in datasets:    
-        with open(input_dir+'/'+dataset,'r', encoding='utf-8') as f:
-            questions = json.load(f)['questions']
-        set_question_length = [None]*len(questions)
+        dataset_path = os.path.join(input_dir, dataset)
+        try:
+            with open(dataset_path, 'rb') as f:
+                content = f.read()
+                # Manually decode with error handling
+                decoded_content = safe_decode(content)
+                questions = json.loads(decoded_content)['questions']
+        except json.JSONDecodeError as e:
+            print(f"JSON decoding error in file {dataset}: {e}")
+            continue  # Skip to the next file
+
+        set_question_length = [None] * len(questions)
         for iquestion, question in enumerate(questions):
             words = SENTENCE_SPLIT_REGEX.split(question['question'].lower())
             words = [w.strip() for w in words if len(w.strip()) > 0]
@@ -28,8 +43,10 @@ def make_vocab_questions(input_dir):
     vocab_list.insert(0, '<pad>')
     vocab_list.insert(1, '<unk>')
     
-    with open('../datasets/vocab_questions.txt', 'w') as f:
+        
+    with open('/Users/yuansu/Desktop/CS444-VQA/input_dir/vocab_questions.txt', 'w') as f:
         f.writelines([w+'\n' for w in vocab_list])
+
     
     print('Make vocabulary for questions')
     print('The number of total words of questions: %d' % len(vocab_set))
@@ -41,8 +58,17 @@ def make_vocab_answers(input_dir, n_answers):
     answers = defaultdict(lambda: 0)
     datasets = os.listdir(input_dir)
     for dataset in datasets:
-        with open(input_dir+'/'+dataset) as f:
-            annotations = json.load(f)['annotations']
+        dataset_path = os.path.join(input_dir, dataset)
+        try:
+            with open(dataset_path, 'rb') as f:
+                content = f.read()
+                # Manually decode with error handling
+                decoded_content = safe_decode(content)
+                annotations = json.loads(decoded_content)['annotations']
+        except json.JSONDecodeError as e:
+            print(f"JSON decoding error in file {dataset}: {e}")
+            continue  # Skip to the next file
+
         for annotation in annotations:
             for answer in annotation['answers']:
                 word = answer['answer']
@@ -54,7 +80,8 @@ def make_vocab_answers(input_dir, n_answers):
     assert('<unk>' not in answers)
     top_answers = ['<unk>'] + answers[:n_answers-1] # '-1' is due to '<unk>'
     
-    with open('../datasets/vocab_answers.txt', 'w') as f:
+    
+    with open('/Users/yuansu/Desktop/CS444-VQA/input_dir/vocab_answers.txt', 'w') as f:  # Changed file name to vocab_answers.txt
         f.writelines([w+'\n' for w in top_answers])
 
     print('Make vocabulary for answers')
