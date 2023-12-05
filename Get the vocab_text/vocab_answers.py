@@ -1,6 +1,8 @@
 import json
+import os
 from collections import Counter
-from utils import text_helper
+from Helper import text_helper
+
 
 
 with open('/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/filtered jason file/filtered_train_annotations.json') as file:

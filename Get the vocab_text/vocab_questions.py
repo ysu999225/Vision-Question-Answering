@@ -1,6 +1,6 @@
 import json
 from collections import Counter
-from utils import text_helper
+import Helper as text_helper
 
 with open('/Users/yuansu/Desktop/CS444-VQA/CS444-VQA/filtered jason file/filtered_train_questions.json') as file:
     questions_data = json.load(file)
