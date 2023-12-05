@@ -7,6 +7,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from data_loader import get_loader
 import os
+from PIL import Image
 
 def testVQA(model,device,data_loader):
     def check(x,y):
@@ -21,16 +22,16 @@ def testVQA(model,device,data_loader):
     correct = 0
     with torch.no_grad():  # Disable gradient computation for testing
         for batch_idx, batch_sample in enumerate(data_loader["valid"]):
-            image = batch_sample["Image"].to(device)
-            question = batch_sample["Question"]
-            label = batch_sample["Answer"]
+            image = batch_sample["image"].to(device)
+            question = batch_sample["question"]
+            label = batch_sample["answer_label"]
             outputs = model(image,question)
             correct += check(label,outputs)
             #print(batch_idx)
     
     print('\nTest set: Accuracy: {}/{} ({:.2f}%)\n'.format(
-         correct, len(data_loader["test"].dataset),
-        100. * correct / len(data_loader["test"].dataset)))
+         correct, len(data_loader["valid"].dataset),
+        100. * correct / len(data_loader["valid"].dataset)))
 
 def mainVQA(model_name):
     device = torch.device('mps')
@@ -39,15 +40,15 @@ def mainVQA(model_name):
     max_num_ans = 10
     num_workers = 8
     print(os.getcwd())
-    data_loader = get_loader(input_dir="./dataset",
+    data_loader = get_loader(input_dir="./input_dir",
         input_vqa_train='train.npy',
-        input_vqa_valid='val.npy',
+        input_vqa_valid='valid.npy',
         max_qst_length=max_qst_length,
         max_num_ans=max_num_ans,
         batch_size=batch_size,
         num_workers=num_workers)
     answers = []
-    with open("dataset/vocab_answers.txt") as f:
+    with open("input_dir/vocab_answers.txt") as f:
         for line in f.readlines():
             answers.append(line)
     if model_name == "random":

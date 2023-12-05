@@ -2,7 +2,7 @@ import numpy as np
 import json
 import os
 import argparse
-import Helper.text_helper as text_helper
+import text_helper as text_helper
 from collections import defaultdict
 
 
@@ -24,7 +24,7 @@ def vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 
     with open(question_file % image_set) as f:
         questions = json.load(f)['questions']
     #coco_set_name = image_set.replace('-dev', '')
-    abs_image_dir = os.path.abspath(image_dir % image_set)
+    abs_image_dir = image_dir % image_set
     image_name_template = '_%012d'
     dataset = [None]*len(questions)            
 
@@ -64,10 +64,10 @@ def vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 
 def main(args):
     
    
-    image_dir = '/Users/yuansu/Desktop/CS444-VQA/input_dir/resize_images/%s/' 
-    annotation_file = '/Users/yuansu/Desktop/CS444-VQA/input_dir/Annotations/filtered_%s_annotations.json'
-    question_file = '/Users/yuansu/Desktop/CS444-VQA/input_dir/Questions/filtered_%s_questions.json'
-    vocab_answer_file = '/Users/yuansu/Desktop/CS444-VQA/output_dir/vocab_answers.txt'
+    image_dir = './input_dir/resize_images/%s/' 
+    annotation_file = './input_dir/Annotations/filtered_%s_annotations.json'
+    question_file = './input_dir/Questions/filtered_%s_questions.json'
+    vocab_answer_file = './output_dir/vocab_answers.txt'
     answer_dict = text_helper.VocabDict(vocab_answer_file)
     valid_answer_set = set(answer_dict.word_list)    
     
@@ -75,10 +75,10 @@ def main(args):
     valid = vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 'val2017')
     test = vqa_processing(image_dir, annotation_file, question_file, valid_answer_set, 'test2017')
     
-    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/train.npy', np.array(train))
-    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/valid.npy', np.array(valid))
-    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/train_valid.npy', np.array(train+valid))
-    np.save('/Users/yuansu/Desktop/CS444-VQA/output_dir/test.npy', np.array(test))
+    np.save('./output_dir/train.npy', np.array(train))
+    np.save('./output_dir/valid.npy', np.array(valid))
+    np.save('./output_dir/train_valid.npy', np.array(train+valid))
+    np.save('./output_dir/test.npy', np.array(test))
 
 
 
@@ -87,10 +87,10 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--input_dir', type=str, default='/Users/yuansu/Desktop/CS444-VQA/input_dir',
+    parser.add_argument('--input_dir', type=str, default='./input_dir',
                         help='directory for inputs')
 
-    parser.add_argument('--output_dir', type=str, default='/Users/yuansu/Desktop/CS444-VQA/output_dir',
+    parser.add_argument('--output_dir', type=str, default='./output_dir',
                         help='directory for outputs')
     
     args = parser.parse_args()
