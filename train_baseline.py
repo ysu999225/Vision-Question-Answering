@@ -1,6 +1,5 @@
 import torch
-from SimpleVQA.easyvqa_dataloader import get_data_loader
-from SimpleVQA.BaselinesSimpleVQA import Baseline_random,Baseline_prior_yes,Baseline_Q_type_prior,Baseline_KNN
+from Baselines.BaselinesVQA import Baseline_random,Baseline_prior_yes,Baseline_Q_type_prior,Baseline_KNN
 import torch.nn as nn
 import torchvision.models as models
 import torch.optim as optim
@@ -24,8 +23,10 @@ def testVQA(model,device,data_loader):
         for batch_idx, batch_sample in enumerate(data_loader["valid"]):
             image = batch_sample["image"].to(device)
             question = batch_sample["question"]
-            label = batch_sample["answer_label"]
+            label = batch_sample['ground_truth']
             outputs = model(image,question)
+            # print(label)
+            # print(outputs)
             correct += check(label,outputs)
             #print(batch_idx)
     

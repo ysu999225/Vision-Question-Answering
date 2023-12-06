@@ -43,6 +43,7 @@ class VqaDataset(data.Dataset):
             mul2idc = list([-1] * max_num_ans)       
             mul2idc[:len(ans2idc)] = ans2idc         
             sample['answer_multi_choice'] = mul2idc  
+            sample["ground_truth"] = np.random.choice(vqa[idx]['valid_answers'])
 
         if transform:
             sample['image'] = transform(sample['image'])

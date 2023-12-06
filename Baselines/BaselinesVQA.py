@@ -22,6 +22,7 @@ class Baseline_random(nn.Module):
         return [random.choice(self.top_answers) for _ in range(len(question))]
 
     def get_top_answers(self,answers):
+        answers = [a.strip() for a in answers]
         top_answers = Counter(answers).most_common(self.num_answers)
         return [ans[0] for ans in top_answers]
 
