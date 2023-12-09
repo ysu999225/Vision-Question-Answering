@@ -5,34 +5,43 @@ import torchvision.models as models
 import torch.optim as optim
 import torch.nn.functional as F
 from data_loader import get_loader
-import os
+import os,json
 from PIL import Image
 
 def testVQA(model,device,data_loader):
-    def check(x,y):
-        correct = 0
+    def check(x,y,question_id):
         if len(x) != len(y):
             raise Exception("Length of two list should be same!!")
         for i in range(len(x)):
-            correct += (x[i] == y[i])
-        return correct
+            correct[answers[question_id[i]]] += (x[i] == y[i])
+            item_num[answers[question_id[i]]] += 1
 
+
+    with open("./input_dir/questionIdAnswerTypeValid.json") as f:
+        answers = json.load(f)
+    correct = {"yes/no": 0,"number":0,"other":0}
+    item_num ={"yes/no": 0,"number":0,"other":0}
     model.eval()
-    correct = 0
     with torch.no_grad():  # Disable gradient computation for testing
         for batch_idx, batch_sample in enumerate(data_loader["valid"]):
             image = batch_sample["image"].to(device)
             question = batch_sample["question"]
+            question_id = batch_sample["question_id"]
             label = batch_sample['ground_truth']
-            outputs = model(image,question)
+            outputs = model(image,question,question_id,answers)
             # print(label)
             # print(outputs)
-            correct += check(label,outputs)
+            check(label,outputs,question_id)
             #print(batch_idx)
     
-    print('\nTest set: Accuracy: {}/{} ({:.2f}%)\n'.format(
-         correct, len(data_loader["valid"].dataset),
-        100. * correct / len(data_loader["valid"].dataset)))
+    for key, item in correct.items():
+		# print('Acurracy for accepted <unk> {} : {:.4f}'
+        #                   .format(key,item/item_num[key]))
+        print('Acurracy for NOT accepted <unk> {} : {:.4f}'
+                          .format(key,correct[key]/item_num[key]))
+                          
+    print('Acurracy for NOT accepted <unk> for all : {:.4f}'
+                          .format(sum(correct.values())/sum(item_num.values())))
 
 def mainVQA(model_name):
     device = torch.device('mps')
@@ -48,19 +57,20 @@ def mainVQA(model_name):
         max_num_ans=max_num_ans,
         batch_size=batch_size,
         num_workers=num_workers)
-    answers = []
-    with open("input_dir/vocab_answers.txt") as f:
-        for line in f.readlines():
-            answers.append(line)
+    
     if model_name == "random":
+        answers = []
+        with open("input_dir/vocab_answers.txt") as f:
+            for line in f.readlines():
+                answers.append(line)
         print("============================")
         print("For baseline random: ")
         print("No training neeeded!")
-        for num in range(1,14):
-            print(f"Picking Top {num} answers".format(num))
-            model = Baseline_random(num_answers=num,answers = answers)
-            print("Answers: ",model.get_top_answers_list())
-            testVQA(model=model,device=device,data_loader=data_loader)
+        num = 150
+        print(f"Picking Top {num} answers".format(num))
+        model = Baseline_random(num_answers=num,answers = answers)
+        print("Answers: ",model.get_top_answers_list())
+        testVQA(model=model,device=device,data_loader=data_loader)
     elif model_name == "prior_yes":
         print("============================")
         print("For baseline prior yes: ")
@@ -72,13 +82,9 @@ def mainVQA(model_name):
         print("For baseline Q-type prior: ")
         print("No training neeeded!")
         print("Number of questions for each type:")
-        model = Baseline_Q_type_prior(answers = answers,questions= data_loader["train"].dataset.get_questions())
-        testVQA(model=model,device=device,data_loader=data_loader)
-    elif model_name == "KNN":
-        print("============================")
-        print("For baseline KNN: ")
-        print("No training neeeded!")
-        model = Baseline_KNN(K=4,answers = data_loader["train"].dataset.get_answers(),questions= data_loader["train"].dataset.get_questions())
+        with open("./input_dir/questionIdAnswerTypeTrain.json") as f:
+            answers = json.load(f)
+        model = Baseline_Q_type_prior(answers = answers,questions= data_loader["train"])
         testVQA(model=model,device=device,data_loader=data_loader)
     else:
         print("This baseline model is not available!")
@@ -89,4 +95,4 @@ if __name__ == "__main__":
     baseline_model_list = ["random","prior_yes","prior_q_type"]
     #for model in baseline_model_list:
        # mainVQA(model)
-    mainVQA("random")
+    mainVQA("prior_q_type")

@@ -46,33 +46,22 @@ class Baseline_Q_type_prior(nn.Module):
         super(Baseline_Q_type_prior,self).__init__()
         self.q_answers = self.get_q_type_answers(questions,answers)
 
-    def forward(self,image, question):
-        return [self.q_answers[self.check_type(q)] for q in question]
+    def forward(self,image, question,questionId,answerstype):
+        return [self.q_answers[answerstype[qid]] for q,qid in zip(question,questionId)]
 
     def get_q_type_answers(self,questions,answers):
-        Qtype_ans = {
-            "Yes_No": [],
-            "What_Shape": [],
-            "What_Color": [],
-        }
+        Qtype_ans = {"yes/no": [],"number":[],"other":[]}
         res = {}
-        for question,answer in zip(questions,answers):
-            Qtype_ans[self.check_type(question)].append(answer)
+        for batch_idx, batch_sample in enumerate(questions):
+            question_id = batch_sample["question_id"]
+            label = batch_sample['ground_truth']
+            for i in range(len(label)):
+                Qtype_ans[answers[question_id[i]]].append(label[i])
         for key, value in Qtype_ans.items():
-            print(key,len(value))
             res[key] = Counter(value).most_common(1)[0][0]
         return res
 
-    def check_type(self,question):
-        if "what" not in question:
-            return "Yes_No"
-        elif "color" in question:
-            return "What_Color"
-        elif "shape" in question:
-            return "What_Shape"
-        else:
-            print(question)
-            raise Exception("Question not belong to any catgory!")
+
         
 class Baseline_KNN(nn.Module):
     """_summary_
