@@ -4,14 +4,14 @@ import torch
 import torch.utils.data as data
 import torchvision.transforms as transforms
 from PIL import Image
-from Helper import text_helper
+from utils import text_helper
 
 
 class VqaDataset(data.Dataset):
 
     def __init__(self, input_dir, input_vqa, max_qst_length=30, max_num_ans=10, transform=None):
         self.input_dir = input_dir
-        self.vqa = np.load(input_dir+'/'+input_vqa,allow_pickle=True)
+        self.vqa = np.load(input_dir+'/'+input_vqa, allow_pickle=True)
         self.qst_vocab = text_helper.VocabDict(input_dir+'/vocab_questions.txt')
         self.ans_vocab = text_helper.VocabDict(input_dir+'/vocab_answers.txt')
         self.max_qst_length = max_qst_length
@@ -29,21 +29,21 @@ class VqaDataset(data.Dataset):
         transform = self.transform
         load_ans = self.load_ans
 
-        image = vqa[idx]['image_path']
+        image = "." + vqa[idx]['image_path']
         image = Image.open(image).convert('RGB')
         qst2idc = np.array([qst_vocab.word2idx('<pad>')] * max_qst_length)  # padded with '<pad>' in 'ans_vocab'
         qst2idc[:len(vqa[idx]['question_tokens'])] = [qst_vocab.word2idx(w) for w in vqa[idx]['question_tokens']]
         sample = {'image': image, 'question': qst2idc}
         sample["question_id"] = str(vqa[idx]['question_id'])
+
         if load_ans:
             ans2idc = [ans_vocab.word2idx(w) for w in vqa[idx]['valid_answers']]
             ans2idx = np.random.choice(ans2idc)
-            sample['answer_label'] = ans2idx        
+            sample['answer_label'] = ans2idx         # for training
 
-            mul2idc = list([-1] * max_num_ans)       
-            mul2idc[:len(ans2idc)] = ans2idc         
-            sample['answer_multi_choice'] = mul2idc  
-            sample["ground_truth"] = np.random.choice(vqa[idx]['valid_answers'])
+            mul2idc = list([-1] * max_num_ans)       # padded with -1 (no meaning) not used in 'ans_vocab'
+            mul2idc[:len(ans2idc)] = ans2idc         # our model should not predict -1
+            sample['answer_multi_choice'] = mul2idc  # for evaluation metric of 'multiple choice'
 
         if transform:
             sample['image'] = transform(sample['image'])
@@ -56,7 +56,6 @@ class VqaDataset(data.Dataset):
 
 
 def get_loader(input_dir, input_vqa_train, input_vqa_valid, max_qst_length, max_num_ans, batch_size, num_workers):
-
     transform = {
         phase: transforms.Compose([transforms.ToTensor(),
                                    transforms.Normalize((0.485, 0.456, 0.406),
@@ -86,4 +85,3 @@ def get_loader(input_dir, input_vqa_train, input_vqa_valid, max_qst_length, max_
         for phase in ['train', 'valid']}
 
     return data_loader
-

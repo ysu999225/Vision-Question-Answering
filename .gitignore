@@ -4,4 +4,5 @@
 **/coco
 **/datasets/
 **/models
+**/logs
 .DS_Store
