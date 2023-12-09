@@ -15,17 +15,17 @@ def get_answer_type(answer):
 
     if answer.isdigit():
         return 'numeric'
-    # If the answer is 'yes' or 'no'
+    # the answer is 'yes' or 'no'
     elif answer.lower() in ['yes', 'no']:
         return 'yes/no'
-    # If the answer is a single word (not 'yes' or 'no')
+    # the answer is a single word but not 'yes' or 'no'
     elif len(answer.split()) == 1:
         return 'one word'
-    # If the answer is a phrase
+    # phrase
     else:
         return 'phrase'
     
-        # If the answer is numeric
+        # numeric
     if answer.isdigit():
         return 'numeric'
     # If the answer is 'yes' or 'no'
