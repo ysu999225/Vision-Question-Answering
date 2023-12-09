@@ -1,6 +1,6 @@
 import torch
 from easyvqa_dataloader import get_data_loader
-from BaselinesSimpleVQA import Baseline_random,Baseline_prior_yes,Baseline_Q_type_prior,Baseline_KNN
+from BaselinesEasyVQA import Baseline_random,Baseline_prior_yes,Baseline_Q_type_prior,Baseline_KNN
 import torch.nn as nn
 import torchvision.models as models
 import torch.optim as optim
@@ -51,7 +51,7 @@ def main(model_name):
     device = torch.device('mps')
     batch_size = 32
     shuffle = True
-    data_loader = get_data_loader(data_dir="./dataSimpleVQA/",batch_size=batch_size,shuffle=shuffle)
+    data_loader = get_data_loader(data_dir="./dataEasyVQA/",batch_size=batch_size,shuffle=shuffle)
     # num_epochs = 10
     # criterion = nn.CrossEntropyLoss()
     # optimizer = optim.SGD(model.parameters(), lr=0.01)

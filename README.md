@@ -1,22 +1,16 @@
 # CS444-VQA
-## Baseline
-### Simple VAQ dataset
-The dataset is in [/dataSimpleVQA](/dataSimpleVQA/)
+# Folder Information
+- [Baselines/](./Baselines/) This folder contains the baselines model: **Random, Prior-yes, and Per Q-type prior**
+- [BasicVQA/](./BasicVQA/) This folder contains the necessary files to run the experiment for [basic vqa](https://github.com/tbmoon/basic_vqa.git) model using our data subset.
+- [EasyVQA/](./EasyVQA/) This folder contains our experiment for [easy vqa](https://github.com/vzhou842/easy-VQA).
+- [Helper/](./Helper/) This folder contains all the scripts that are helpful in generating subset and input for models
+- [input_dir/](./input_dir/) This folder contains all the data required for running the model.
+- [wandb/](./wandb/) This folder contains files needed for text_help.py
+# Usage
 
-This dataset has 13 answers.
-
-There are 3 types of questions: Yes/No, What Shape, and What Color.
-
-| Model         | Accuracy |
-| ------------- | ------------- |
-| random        |  Best 36.89% when select "no" only |
-|               |  Accuracy decrease by increasing number of random answers to choose|
-|               |  8.9% when select randomly from all 13 answers|
-| prior yes     |  36.63%|
-| prior Q-type prior  | 43.26%  |
-| KNN  |   |
-
-KNN results when K=4
-Test set: Accuracy: 1490/9468 (15.74%)
-
-### VAQ dataset
+# Reference
+- Paper: 
+    - [VQA: Visual Question Answering](https://arxiv.org/pdf/1505.00468.pdf)
+    - [VQA official Website](https://visualqa.org/)
+-  Pytorch implementation: [basic vqa](https://github.com/tbmoon/basic_vqa.git)
+- [Pytorch tutorial](https://pytorch.org/tutorials/)
