@@ -67,7 +67,7 @@ def main(args):
     image_dir = './input_dir/resize_images/%s/' 
     annotation_file = './input_dir/Annotations/filtered_%s_annotations.json'
     question_file = './input_dir/Questions/filtered_%s_questions.json'
-    vocab_answer_file = './output_dir/vocab_answers.txt'
+    vocab_answer_file = './input_dir/vocab_answers.txt'
     answer_dict = text_helper.VocabDict(vocab_answer_file)
     valid_answer_set = set(answer_dict.word_list)    
     
