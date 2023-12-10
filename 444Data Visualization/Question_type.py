@@ -36,18 +36,19 @@ df_counts = pd.DataFrame(type_counts.items(), columns=['Question Type', 'Count']
 print(df_counts)
 
 
-plt.figure(figsize=(14, 8))
+plt.figure(figsize=(20, 10))  
 bars = plt.bar(df_counts['Question Type'], df_counts['Count'], color=plt.cm.Paired(np.arange(len(df_counts['Question Type']))))
 
-plt.ylabel('Counts')
-plt.xlabel('Question Types')
-plt.title('Counts of Questions by Type')
-plt.xticks(rotation=45, ha='right')
+plt.ylabel('Counts', fontsize=24)  
+plt.xlabel('Question Types', fontsize=24) 
+plt.title('Counts of Questions by Type', fontsize=24)  
+plt.xticks(rotation=45, ha='right', fontsize=20)  
+plt.yticks(rotation=0, ha='right', fontsize=20)  
 
-
+# Add counts above the bars
 for bar in bars:
     yval = bar.get_height()
-    plt.text(bar.get_x() + bar.get_width()/2, yval + 10, yval, ha='center', va='bottom')
+    plt.text(bar.get_x() + bar.get_width()/2, yval + 10, yval, ha='center', va='bottom', fontsize=18) 
 
 plt.tight_layout()
 plt.show()

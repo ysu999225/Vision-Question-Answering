@@ -29,10 +29,29 @@ length_distribution_percentage = (length_distribution / length_distribution.sum(
 
 
 plt.figure(figsize=(12, 6))
-length_distribution_percentage.plot(kind='pie', autopct='%1.1f%%', labels=length_distribution_percentage.index)
+length_distribution_percentage.plot(
+    kind='pie', 
+    #autopct='%1.1f%%', 
+    labels=length_distribution_percentage.index,
+    startangle=200
+ 
+)
+
 plt.title('Probability Distribution of Answer Lengths for 1, 2, 3, and Others')
-plt.ylabel('') 
+plt.ylabel('')  
+
+
+labels = [f'{i} - {p:1.1f}%' for i, p in zip(length_distribution_percentage.index, length_distribution_percentage)]
+
+plt.legend(
+    title='Answer Lengths',
+    loc='lower right',
+    bbox_to_anchor=(1, 0, 0.5, 1),
+    labels=labels
+)
+
 plt.show()
+
 
 
 print("Probability Distribution of Answer Lengths (in %):")
