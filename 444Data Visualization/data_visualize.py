@@ -26,7 +26,7 @@ def get_question_type(question):
     elif first_word in ['what', 'who', 'where', 'when', 'why']:
         return first_word
     else:
-        return None
+        return 'Others'
 
 question_types = filter(None, map(get_question_type, questions))
 

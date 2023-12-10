@@ -19,40 +19,29 @@ df_answers = pd.DataFrame({
     'Length': answers_lengths
 })
 
-length_distribution = df_answers['Length'].value_counts().sort_index()
 
+
+df_answers['Category'] = df_answers['Length'].map({1: '1', 2: '2', 3: '3'}).fillna('Others')
+length_distribution = df_answers['Category'].value_counts().sort_index()
 length_distribution_percentage = (length_distribution / length_distribution.sum()) * 100
+
+
+
+
+plt.figure(figsize=(12, 6))
+length_distribution_percentage.plot(kind='pie', autopct='%1.1f%%', labels=length_distribution_percentage.index)
+plt.title('Probability Distribution of Answer Lengths for 1, 2, 3, and Others')
+plt.ylabel('') 
+plt.show()
 
 
 print("Probability Distribution of Answer Lengths (in %):")
 print(length_distribution_percentage)
 
+
+
+
 word_freq = pd.Series(' '.join(all_answers).split()).value_counts()
-
-plt.figure(figsize=(12, 6))
-word_freq.head(20).plot(kind='bar')
-plt.title('Top 20 Most Frequent Words in Answers')
-plt.xlabel('Words')
-plt.ylabel('Frequency')
-plt.show()
-
-# Plotting answer length distribution
-#plt.figure(figsize=(12, 6))
-#df_answers['Length'].hist(bins=30)
-#plt.title('Distribution of Answer Lengths')
-#plt.xlabel('Length of Answer (Number of Words)')
-#plt.ylabel('Frequency')
-#plt.show()
-
-# Plotting the probability distribution of answer lengths
-plt.figure(figsize=(12, 6))
-length_distribution_percentage.plot(kind='bar')
-plt.title('Probability Distribution of Answer Lengths')
-plt.xlabel('Length of Answer (Number of Words)')
-plt.ylabel('Probability (%)')
-plt.show()
-
-
 
 # Creating a word cloud 
 wordcloud = WordCloud(width=800, height=400, background_color='white').generate(' '.join(all_answers))

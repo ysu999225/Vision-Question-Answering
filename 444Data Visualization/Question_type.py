@@ -1,44 +1,53 @@
 import json
-import matplotlib.pyplot as plt
 from collections import Counter
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 json_file_path = '/Users/yuansu/Desktop/CS444-VQA/input_dir/Questions/filtered_train2017_questions.json'
 
-
-
 with open(json_file_path, 'r') as file:
     data = json.load(file)
-
 
 questions = [item['question'] for item in data['questions']]
 
 
 def get_question_type(question):
-    first_word = question.split()[0].lower()
-   
-    if first_word == 'how' and 'many' in question.split():
-        return 'how many'
-   
-    elif first_word in ['is','are','Does','Do']:
-        return 'yes/no'
-    elif first_word in ['what', 'who', 'where', 'when', 'why']:
-        return first_word
-    else:
-        return None
 
-question_types = filter(None, map(get_question_type, questions))
+    question = question.lower().strip().replace('?', '').replace('.', '')
 
+    question_types = [
+        ('what is',), ('what color',), ('what kind',), ('what type',), 
+        ('what does',), ('what time',), ('what sport',), ('what animal',), 
+        ('what brand',), ('is this',), ('is there',), ('how many',), ('are',),('does',),
+        ('where',), ('why',), ('which',), ('do',), ('who',)
+    ]
+    for q_type in question_types:
+        if question.startswith(q_type):
+            return ' '.join(q_type)
+    return 'other'
 
-
-
+question_types = [get_question_type(q) for q in questions]
 
 type_counts = Counter(question_types)
-
 
 df_counts = pd.DataFrame(type_counts.items(), columns=['Question Type', 'Count']).sort_values(by='Count', ascending=False)
 print(df_counts)
 
 
+plt.figure(figsize=(14, 8))
+bars = plt.bar(df_counts['Question Type'], df_counts['Count'], color=plt.cm.Paired(np.arange(len(df_counts['Question Type']))))
 
+plt.ylabel('Counts')
+plt.xlabel('Question Types')
+plt.title('Counts of Questions by Type')
+plt.xticks(rotation=45, ha='right')
+
+
+for bar in bars:
+    yval = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2, yval + 10, yval, ha='center', va='bottom')
+
+plt.tight_layout()
+plt.show()
