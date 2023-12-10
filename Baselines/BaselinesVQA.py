@@ -50,15 +50,19 @@ class Baseline_Q_type_prior(nn.Module):
         return [self.q_answers[answerstype[qid]] for q,qid in zip(question,questionId)]
 
     def get_q_type_answers(self,questions,answers):
-        Qtype_ans = {"yes/no": [],"number":[],"other":[]}
+        Qtype_ans = {}
         res = {}
         for batch_idx, batch_sample in enumerate(questions):
             question_id = batch_sample["question_id"]
             label = batch_sample['ground_truth']
             for i in range(len(label)):
+                if answers[question_id[i]] not in Qtype_ans.keys():
+                    Qtype_ans[answers[question_id[i]]] = []
                 Qtype_ans[answers[question_id[i]]].append(label[i])
         for key, value in Qtype_ans.items():
             res[key] = Counter(value).most_common(1)[0][0]
+        for key, value in res.items():
+            print("For Question Type {}: {}".format(key,value))
         return res
 
 
