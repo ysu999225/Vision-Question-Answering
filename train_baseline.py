@@ -8,17 +8,19 @@ from data_loader import get_loader
 import os,json
 from PIL import Image
 
-def testVQA(model,device,data_loader):
+def testVQA(model,device,data_loader,Prior=True):
     def check(x,y,question_id):
         if len(x) != len(y):
             raise Exception("Length of two list should be same!!")
         for i in range(len(x)):
-            correct[answers[question_id[i]]] += (x[i] == y[i])
-            item_num[answers[question_id[i]]] += 1
+            correct[mapping[question_id[i]]] += (x[i] == y[i])
+            item_num[mapping[question_id[i]]] += 1
 
-
-    with open("./input_dir/questionIdAnswerTypeValid.json") as f:
+    answers_path = "./input_dir/questionIdAnswerTypeValid.json" if Prior else "./input_dir/questionIdQuestionTypeValid.json"
+    with open(answers_path) as f:
         answers = json.load(f)
+    with open("./input_dir/questionIdAnswerTypeValid.json") as f:
+        mapping = json.load(f)
     correct = {"yes/no": 0,"number":0,"other":0}
     item_num ={"yes/no": 0,"number":0,"other":0}
     model.eval()
@@ -82,10 +84,10 @@ def mainVQA(model_name):
         print("For baseline Q-type prior: ")
         print("No training neeeded!")
         print("Number of questions for each type:")
-        with open("./input_dir/questionIdAnswerTypeTrain.json") as f:
+        with open("./input_dir/questionIdQuestionTypeTrain.json") as f:
             answers = json.load(f)
         model = Baseline_Q_type_prior(answers = answers,questions= data_loader["train"])
-        testVQA(model=model,device=device,data_loader=data_loader)
+        testVQA(model=model,device=device,data_loader=data_loader,Prior=False)
     else:
         print("This baseline model is not available!")
         print("Available Baseline Models: random, prior_yes, prior_q_type, KNN")
